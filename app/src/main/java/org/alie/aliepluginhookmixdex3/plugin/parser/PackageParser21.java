@@ -33,7 +33,7 @@ import java.util.Set;
 //5.0 版本
 public class PackageParser21  extends  PackageParser{
 
-    private static final String TAG = "david";
+    private static final String TAG = "Alie";
     protected Class<?> sPackageUserStateClass;
     protected Class<?> sPackageParserClass;
     protected Class<?> sActivityClass;
