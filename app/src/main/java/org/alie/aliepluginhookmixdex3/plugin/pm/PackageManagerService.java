@@ -21,7 +21,9 @@ import org.alie.aliepluginhookmixdex3.plugin.utils.reflect.PluginDirHelper;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alie on 2019/10/26.
@@ -30,7 +32,8 @@ import java.util.List;
  */
 public class PackageManagerService extends IPluginManager.Stub {
     private Context mContext;
-
+    // 安装的插件是20个，但是同时运行的插件最多5个
+    private Map<String,PluginPackageMap> pluginAllMap = new HashMap<>(20);
     public PackageManagerService(Context mContext) {
         this.mContext = mContext;
     }
@@ -85,6 +88,27 @@ public class PackageManagerService extends IPluginManager.Stub {
     }
 
 
+    @Override
+    public int installPackage(String pluginFile, int flags) throws RemoteException {
+        String apkfile = null;
+        PackageManager pm = mContext.getPackageManager();
+        PackageInfo info = pm.getPackageArchiveInfo(pluginFile, 0);
+        //插件的apk文件 存放在  /data/data/宿主包名/Plugin/插件包名/apk/base-1.apk
+        apkfile = PluginDirHelper.getPluginApkFile(mContext, info.packageName);
+        if(new File(apkfile).exists()){
+            new File(apkfile).delete();
+        }
+        FileUtils.copyFile(pluginFile, apkfile);
+//        -----------------安装------------------
+        try {
+//            ----------------解析----------
+            PluginPackageMap pluginPackageMap = new PluginPackageMap(mContext,new File(apkfile));
+            pluginAllMap.put(pluginPackageMap.getmPackageName(),pluginPackageMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     @Override
     public boolean waitForReady() throws RemoteException {
@@ -189,27 +213,6 @@ public class PackageManagerService extends IPluginManager.Stub {
     @Override
     public ApplicationInfo getApplicationInfo(String packageName, int flags) throws RemoteException {
         return null;
-    }
-
-    @Override
-    public int installPackage(String pluginFile, int flags) throws RemoteException {
-        String apkfile = null;
-        PackageManager pm = mContext.getPackageManager();
-        PackageInfo info = pm.getPackageArchiveInfo(pluginFile, 0);
-        //插件的apk文件 存放在  /data/data/宿主包名/Plugin/插件包名/apk/base-1.apk
-        apkfile = PluginDirHelper.getPluginApkFile(mContext, info.packageName);
-        if(new File(apkfile).exists()){
-            new File(apkfile).delete();
-        }
-        FileUtils.copyFile(pluginFile, apkfile);
-//        -----------------安装------------------
-        try {
-//            ----------------解析----------
-            PluginPackageMap pluginPackageMap = new PluginPackageMap(mContext,new File(apkfile));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 
     @Override

@@ -52,15 +52,19 @@ public class PluginPackageMap {
     private PackageInfo mHostPackageInfo;
 
 
+    public String getmPackageName() {
+        return mPackageName;
+    }
+
     public PluginPackageMap(Context hostContext, File pluginFile) throws Exception {
         mHostContext = hostContext;
         mPluginFile = pluginFile;
         mParser = PackageParserManager.getInstance().getPluginParser(hostContext);
         mParser.parsePackage(pluginFile, 0);
 //        插件的包名
-        mPackageName = mParser.getPackageName();
-//        Activity  缩略信息
-        List datas = mParser.getActivities();
+        mPackageName=mParser.getPackageName();
+//       ========================= Activity  ========================
+        List datas=mParser.getActivities();
         for (Object activity : datas) {
 //            插件的包名  ----插件activity的类名
 //            键
@@ -78,10 +82,58 @@ public class PluginPackageMap {
             List<IntentFilter> filters = mParser.readIntentFilterFromComponent(activity);
             mActivityIntentFilterCache.remove(componentName);
             mActivityIntentFilterCache.put(componentName, new ArrayList<IntentFilter>(filters));
-
-
         }
 
+//       ========================= Service  ========================
+        datas = mParser.getServices();
+        for (Object data : datas) {
+            ComponentName componentName = new ComponentName(mPackageName, mParser.readNameFromComponent(data));
+            mServiceObjCache.put(componentName, data);
+            ServiceInfo value = mParser.generateServiceInfo(data, 0);
+            fixApplicationInfo(value.applicationInfo);
+            if (TextUtils.isEmpty(value.processName)) {
+                value.processName = value.packageName;
+            }
+            mServiceInfoCache.put(componentName, value);
+            List<IntentFilter> filters = mParser.readIntentFilterFromComponent(data);
+            mServiceIntentFilterCache.remove(componentName);
+            mServiceIntentFilterCache.put(componentName, new ArrayList<IntentFilter>(filters));
+        }
+
+//       ========================= Providers  ========================
+        datas = mParser.getProviders();
+        for (Object data : datas) {
+            ComponentName componentName = new ComponentName(mPackageName, mParser.readNameFromComponent(data));
+            mProviderObjCache.put(componentName, data);
+            ProviderInfo value = mParser.generateProviderInfo(data, 0);
+            fixApplicationInfo(value.applicationInfo);
+            if (TextUtils.isEmpty(value.processName)) {
+                value.processName = value.packageName;
+            }
+            mProviderInfoCache.put(componentName, value);
+
+            List<IntentFilter> filters = mParser.readIntentFilterFromComponent(data);
+            mProviderIntentFilterCache.remove(componentName);
+            mProviderIntentFilterCache.put(componentName, new ArrayList<IntentFilter>(filters));
+        }
+//       ========================= Receivers  ========================
+        datas = mParser.getReceivers();
+        for (Object data : datas) {
+            ComponentName componentName = new ComponentName(mPackageName, mParser.readNameFromComponent(data));
+            mReceiversObjCache.put(componentName, data);
+
+            ActivityInfo value = mParser.generateActivityInfo(data, 0);
+            fixApplicationInfo(value.applicationInfo);
+            if (TextUtils.isEmpty(value.processName)) {
+                value.processName = value.packageName;
+            }
+            mReceiversInfoCache.put(componentName, value);
+
+
+            List<IntentFilter> filters = mParser.readIntentFilterFromComponent(data);
+            mReceiverIntentFilterCache.remove(componentName);
+            mReceiverIntentFilterCache.put(componentName, new ArrayList<IntentFilter>(filters));
+        }
     }
 
     private ApplicationInfo fixApplicationInfo(ApplicationInfo applicationInfo) {
