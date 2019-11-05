@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
- * 2
+ * 2 用来处理动态代理的方式完成的hook
  */
 
 public  abstract class BaseProxyHook extends  BaseHook implements InvocationHandler {
@@ -14,6 +14,7 @@ public  abstract class BaseProxyHook extends  BaseHook implements InvocationHand
     @Override
     public Object invoke(Object o, Method method, Object[] args) throws Throwable {
 //        分发总站     startActivity（宿主 OneActivity）
+        //（宿主的activity当然是不需要被分发的，所以这个是为了开启或关闭分发功能，来作用与宿主或插件activity跳转）
         if (!isEnable()) {
             return method.invoke(realObj, method, args);
         }

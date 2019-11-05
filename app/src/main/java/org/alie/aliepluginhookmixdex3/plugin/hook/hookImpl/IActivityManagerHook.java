@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
 
 /**
- * 3
+ * 3 之前在动态代理的时候必须要知道 要实现的接口有哪些，所以这个是IActivityManagerHook
  */
 
 public class IActivityManagerHook extends BaseProxyHook {

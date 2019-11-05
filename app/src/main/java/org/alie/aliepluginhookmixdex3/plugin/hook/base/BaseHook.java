@@ -11,7 +11,7 @@ public abstract class BaseHook {
 //分发类
     protected  BaseClassHandle classHandle;
 
-    //    开启关闭
+    //    开启关闭 （宿主的activity当然是不需要被分发的，所以这个是为了开启或关闭分发功能，来作用与宿主或插件activity跳转）
     public boolean isEnable = false;
 
 
