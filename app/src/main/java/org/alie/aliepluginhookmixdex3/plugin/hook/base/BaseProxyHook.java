@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
- * 2 用来处理动态代理的方式完成的hook
+ * 2 使用动态代理方法是来kook的动态代理基类
  */
 
 public  abstract class BaseProxyHook extends  BaseHook implements InvocationHandler {

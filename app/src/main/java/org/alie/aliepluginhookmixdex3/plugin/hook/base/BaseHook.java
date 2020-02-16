@@ -6,7 +6,7 @@ package org.alie.aliepluginhookmixdex3.plugin.hook.base;
 
 public abstract class BaseHook {
 //    hook类 ----动态代理  invoke        接口  serListner
-//  还原的系统对象
+//  这里的realObj实际上是 hook的点的那个对象比如（ActivityManagerProxy 或者 mH）
     protected Object realObj;
 //分发类
     protected  BaseClassHandle classHandle;

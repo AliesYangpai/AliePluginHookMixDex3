@@ -24,6 +24,8 @@ import java.util.TreeMap;
 /**
  * 因此，我们解析的插件最终会设置到这个PluginPackageMap缓存表中，
  * 缓存的目的是：首先，系统pms中 之所以能进行跳转是因为，将apk文件转化为存档文件，所这个缓存表也是模仿pms
+ * 组件内存映射：指的是从清单文件中加载的各种xml组件的对象映射
+ * 组件内存存档：指的是组件映射中的xxxxInfo
  */
 
 public class PluginPackageMap {
@@ -31,12 +33,12 @@ public class PluginPackageMap {
     private static final String TAG = "PluginPackageMap";
 
     //    ComponentName   组件类名   -------- Activity  前生 内存-----》存档  ActivityInfo
-//    Object--->PackageParser.Activity  大标题  javabean
+//    Object--->PackageParser.Activity  组件内存映射
     private Map<ComponentName, Object> mActivityObjCache = new TreeMap<ComponentName, Object>(new ComponentNameComparator());
     private Map<ComponentName, Object> mServiceObjCache = new TreeMap<ComponentName, Object>(new ComponentNameComparator());
     private Map<ComponentName, Object> mProviderObjCache = new TreeMap<ComponentName, Object>(new ComponentNameComparator());
     private Map<ComponentName, Object> mReceiversObjCache = new TreeMap<ComponentName, Object>(new ComponentNameComparator());
-    //缓存插件  四大组件的存档
+    //缓存插件  四大组件的存档 组件内存存档
     private Map<ComponentName, ActivityInfo> mActivityInfoCache = new TreeMap<ComponentName, ActivityInfo>(new ComponentNameComparator());
     private Map<ComponentName, ServiceInfo> mServiceInfoCache = new TreeMap<ComponentName, ServiceInfo>(new ComponentNameComparator());
     private Map<ComponentName, ProviderInfo> mProviderInfoCache = new TreeMap<ComponentName, ProviderInfo>(new ComponentNameComparator());
@@ -68,6 +70,7 @@ public class PluginPackageMap {
 //        插件的包名
         mPackageName=mParser.getPackageName();
 //       ========================= Activity  ========================
+        // 这里的datas是Activity组件映射
         List datas=mParser.getActivities();
         for (Object activity : datas) {
 //            插件的包名  ----插件activity的类名
@@ -127,6 +130,7 @@ public class PluginPackageMap {
             mReceiversObjCache.put(componentName, data);
 
             ActivityInfo value = mParser.generateActivityInfo(data, 0);
+            // 根据业务要求，进行目录填充
             fixApplicationInfo(value.applicationInfo);
             if (TextUtils.isEmpty(value.processName)) {
                 value.processName = value.packageName;
@@ -140,8 +144,14 @@ public class PluginPackageMap {
         }
     }
 
+    /**
+     * 已查看packagePaser对apk中applicationInfo的解析，在sourceDir，dataDir，nativeLibraryDir，processName
+     * 这几个属性中并未进行赋值
+     * @param applicationInfo
+     * @return
+     */
     private ApplicationInfo fixApplicationInfo(ApplicationInfo applicationInfo) {
-
+        Log.i(TAG,"====fixApplicationInfo()==applicationInfo.processName："+applicationInfo.processName+" applicationInfo.packageName:"+applicationInfo.packageName);
         if (applicationInfo.sourceDir == null) {
             applicationInfo.sourceDir = mPluginFile.getPath();
         }
@@ -159,6 +169,17 @@ public class PluginPackageMap {
             applicationInfo.processName = applicationInfo.packageName;
         }
         return applicationInfo;
+    }
+
+    public ActivityInfo getActivityInfo(ComponentName className, int flags) throws Exception {
+        ActivityInfo activityInfo;
+        activityInfo = mActivityInfoCache.get(className);
+        fixApplicationInfo(activityInfo.applicationInfo);
+        if (TextUtils.isEmpty(activityInfo.processName)) {
+            activityInfo.processName = activityInfo.packageName;
+            return activityInfo;
+        }
+        return null;
     }
 
 

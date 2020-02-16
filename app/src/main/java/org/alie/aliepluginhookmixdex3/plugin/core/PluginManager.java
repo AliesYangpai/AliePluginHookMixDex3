@@ -4,7 +4,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.os.IBinder;
+import android.os.RemoteException;
 
 import org.alie.aliepluginhookmixdex3.plugin.pm.IPluginManager;
 
@@ -60,5 +63,35 @@ public class PluginManager implements ServiceConnection {
         }  catch (Exception e) {
         }
         return -1;
+    }
+
+    public ActivityInfo selectProxyActivity(Intent intent) {
+        if (mPluginManager!=null) {
+            try {
+                return  mPluginManager.selectStubActivityInfoByIntent(intent);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public ActivityInfo resolveActivityInfo(Intent intent, int flags) throws RemoteException {
+        if (mPluginManager != null) {
+            return mPluginManager.getActivityInfo(intent.getComponent(), flags);
+        }
+        return null;
+    }
+
+    public ApplicationInfo getApplicationInfo(ComponentName componentName, int flag) {
+
+        if (mPluginManager != null) {
+            try {
+                return mPluginManager.getApplicationInfo(componentName.getPackageName(), flag);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return  null;
     }
 }

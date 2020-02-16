@@ -128,6 +128,15 @@ public class PackageManagerService extends IPluginManager.Stub {
 
     @Override
     public ActivityInfo getActivityInfo(ComponentName className, int flags) throws RemoteException {
+        //        总表 map
+        PluginPackageMap pluginPackageMap=pluginAllMap.get(className.getPackageName());
+        if (pluginPackageMap != null) {
+            try {
+                return pluginPackageMap.getActivityInfo(className, flags);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return null;
     }
 
@@ -243,7 +252,20 @@ public class PackageManagerService extends IPluginManager.Stub {
 
     @Override
     public ActivityInfo selectStubActivityInfoByIntent(Intent targetIntent) throws RemoteException {
+//        根据intent 插件  ActivityInfo     ---》mainActivity    ActivityInfo  包名 类名  启动模式   缓存表
+        ActivityInfo ai= getActivityInfo(targetIntent.getComponent(), 0);
+
+
+//       代理的activity  ActivtiyInfo  宿主的
+        if (ai != null) {
+            selectProxyActivity(ai);
+        }
+
+
         return null;
+    }
+
+    private void selectProxyActivity(ActivityInfo ai) {
     }
 
     @Override
