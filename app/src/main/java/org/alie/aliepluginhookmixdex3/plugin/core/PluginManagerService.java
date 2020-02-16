@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 
-import org.alie.aliepluginhookmixdex3.plugin.pm.PackageManagerService;
-
 /**
  * Created by Alie on 2019/10/26.
  * 类描述

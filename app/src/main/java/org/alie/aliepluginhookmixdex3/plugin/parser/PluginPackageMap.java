@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ServiceInfo;
 import android.text.TextUtils;
+import android.util.Log;
 
 
 import org.alie.aliepluginhookmixdex3.plugin.utils.reflect.ComponentNameComparator;
@@ -26,6 +27,9 @@ import java.util.TreeMap;
  */
 
 public class PluginPackageMap {
+
+    private static final String TAG = "PluginPackageMap";
+
     //    ComponentName   组件类名   -------- Activity  前生 内存-----》存档  ActivityInfo
 //    Object--->PackageParser.Activity  大标题  javabean
     private Map<ComponentName, Object> mActivityObjCache = new TreeMap<ComponentName, Object>(new ComponentNameComparator());
@@ -70,7 +74,7 @@ public class PluginPackageMap {
 //            键
             ComponentName componentName = new ComponentName(mPackageName
                     , mParser.readNameFromComponent(activity));
-
+            Log.i(TAG,"====PluginPackageMap()=="+componentName.getClassName());
 //值
             mActivityObjCache.put(componentName, activity);
             ActivityInfo value = mParser.generateActivityInfo(activity, 0);

@@ -1,4 +1,4 @@
-package org.alie.aliepluginhookmixdex3.plugin.pm;
+package org.alie.aliepluginhookmixdex3.plugin.core;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +16,7 @@ import android.content.pm.ServiceInfo;
 import android.os.RemoteException;
 
 import org.alie.aliepluginhookmixdex3.plugin.parser.PluginPackageMap;
+import org.alie.aliepluginhookmixdex3.plugin.pm.IPluginManager;
 import org.alie.aliepluginhookmixdex3.plugin.utils.reflect.FileUtils;
 import org.alie.aliepluginhookmixdex3.plugin.utils.reflect.PluginDirHelper;
 

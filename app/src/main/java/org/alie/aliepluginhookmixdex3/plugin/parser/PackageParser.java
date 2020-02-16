@@ -21,7 +21,6 @@ import java.util.List;
  */
 
 public abstract class PackageParser {
-//    外包
     protected Object mPackageParser;
     protected Context mContext;
 
@@ -29,8 +28,11 @@ public abstract class PackageParser {
         this.mContext = mContext;
     }
 
+
+    // 解析apk
     public abstract void parsePackage(File packageFile, int flags) throws Exception;
 
+    // 获取组件信息
     public abstract ActivityInfo generateActivityInfo(Object activity, int flags) throws Exception;
 
     public abstract ServiceInfo generateServiceInfo(Object service, int flags) throws Exception;
